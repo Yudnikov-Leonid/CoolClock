@@ -1,12 +1,16 @@
 import 'package:cool_clock/main_screen/main_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:timezone/data/latest.dart' as tz;
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  tz.initializeTimeZones();
+
   final initializationSettingsAndroid =
       AndroidInitializationSettings('launch_background');
   final initializationSettingsIOS = DarwinInitializationSettings(

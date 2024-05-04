@@ -1,8 +1,12 @@
+import 'package:cool_clock/main.dart';
 import 'package:cool_clock/timer_screen/alarm_info.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:intl/intl.dart';
+import 'package:timezone/standalone.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
 
 class TimerScreen extends StatefulWidget {
   const TimerScreen({super.key});
@@ -53,7 +57,9 @@ class _TimerScreenState extends State<TimerScreen> {
       child: MaterialButton(
         animationDuration: const Duration(milliseconds: 100),
         splashColor: Colors.blue.shade900,
-        onPressed: () {},
+        onPressed: () {
+          _makeAlarm('desc');
+        },
         child: const Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -133,6 +139,38 @@ class _TimerScreenState extends State<TimerScreen> {
           ],
         ),
       ),
+    );
+  }
+
+  void _makeAlarm(String desc) async {
+    final notificationDateTime =
+        DateTime.now().add(const Duration(seconds: 10));
+    const androidChannel = AndroidNotificationDetails(
+        'alarm_notif', 'alarm_notif',
+        channelDescription: 'Channel for alarm notification',
+        icon: 'launch_background',
+        sound: RawResourceAndroidNotificationSound('alarm_sound'),
+        importance: Importance.max,
+        priority: Priority.max,
+        fullScreenIntent: true,
+        largeIcon: DrawableResourceAndroidBitmap('launch_background'));
+
+    const iosChannel = DarwinNotificationDetails(
+        sound: 'alarm_sound.wav',
+        presentAlert: true,
+        presentBadge: true,
+        presentSound: true);
+
+    const channel =
+        NotificationDetails(android: androidChannel, iOS: iosChannel);
+    await flutterLocalNotificationsPlugin.zonedSchedule(
+      0,
+      'Alarm',
+      desc,
+      tz.TZDateTime.parse(tz.local, notificationDateTime.toString()),
+      channel,
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,
     );
   }
 }
