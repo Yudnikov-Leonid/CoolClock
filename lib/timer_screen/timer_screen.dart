@@ -110,7 +110,7 @@ class _TimerScreenState extends State<TimerScreen> {
                       fontWeight: FontWeight.bold),
                 ),
                 Switch(
-                    value: alarm.isActive,
+                    value: alarm.isPending,
                     onChanged: (value) {},
                     activeColor: Colors.white)
               ],
