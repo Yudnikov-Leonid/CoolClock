@@ -50,4 +50,9 @@ class AlarmHelper {
     final result = await db.query(tableAlarm);
     return result.map((json) => AlarmInfo.fromMap(json)).toList();
   }
+
+  Future<void> delete(int id) async {
+    final db = await database;
+    db.delete(tableAlarm, where: '$columnId = ?', whereArgs: [id]);
+  }
 }

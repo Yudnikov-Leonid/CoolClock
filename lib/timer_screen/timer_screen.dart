@@ -243,10 +243,12 @@ _alarms = _alarmHelper.getAlarms();
                       fontSize: 22,
                       fontWeight: FontWeight.bold),
                 ),
-                const Icon(
-                  Icons.keyboard_arrow_down,
-                  color: Colors.white,
-                  size: 30,
+                IconButton(
+                  icon: const Icon(Icons.delete, color: Colors.white, size: 30,),
+                  onPressed: () async {
+                    await _alarmHelper.delete(alarm.id!);
+                    _loadAlarms();
+                  },
                 )
               ],
             )
