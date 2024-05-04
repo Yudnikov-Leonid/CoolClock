@@ -2,6 +2,7 @@ import 'package:cool_clock/timer_screen/alarm_info.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:intl/intl.dart';
 
 class TimerScreen extends StatefulWidget {
   const TimerScreen({super.key});
@@ -47,7 +48,8 @@ class _TimerScreenState extends State<TimerScreen> {
     return Container(
       height: 100,
       width: double.infinity,
-      decoration: BoxDecoration(color: Colors.blue.shade800, borderRadius: BorderRadius.circular(20)),
+      decoration: BoxDecoration(
+          color: Colors.blue.shade800, borderRadius: BorderRadius.circular(20)),
       child: MaterialButton(
         animationDuration: const Duration(milliseconds: 100),
         splashColor: Colors.blue.shade900,
@@ -55,9 +57,17 @@ class _TimerScreenState extends State<TimerScreen> {
         child: const Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.add, color: Colors.white,),
-            SizedBox(height: 10,),
-            Text('Add alarm', style: TextStyle(color: Colors.white),)
+            Icon(
+              Icons.add,
+              color: Colors.white,
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Text(
+              'Add alarm',
+              style: TextStyle(color: Colors.white),
+            )
           ],
         ),
       ),
@@ -99,7 +109,7 @@ class _TimerScreenState extends State<TimerScreen> {
                     activeColor: Colors.white)
               ],
             ),
-            Text(
+            const Text(
               'Date',
               style: TextStyle(color: Colors.white, fontSize: 14),
             ),
@@ -107,13 +117,13 @@ class _TimerScreenState extends State<TimerScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  '06:00 AM',
-                  style: TextStyle(
+                  DateFormat('hh:mm aa').format(alarm.dateTime),
+                  style: const TextStyle(
                       color: Colors.white,
                       fontSize: 22,
                       fontWeight: FontWeight.bold),
                 ),
-                Icon(
+                const Icon(
                   Icons.keyboard_arrow_down,
                   color: Colors.white,
                   size: 30,
