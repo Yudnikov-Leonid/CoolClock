@@ -32,7 +32,7 @@ class _MainScreenState extends State<MainScreen> {
         height: MediaQuery.of(context).size.height * 0.93,
         child: PageView(
           controller: _pageController,
-          children: const [TimerScreen(), ClockScreen()],
+          children: const [ClockScreen(), TimerScreen()],
           onPageChanged: (value) {
             setState(() {
               _currentPage = value;
