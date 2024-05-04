@@ -17,9 +17,11 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: NavigationBar(
+        backgroundColor: Colors.blue.shade100,
+        indicatorColor: Colors.blue.shade300,
         height: 60,
         destinations: const [
-          NavigationDestination(label: "Clock", icon: Icon(Icons.lock_clock)),
+          NavigationDestination(label: "Clock", icon: Icon(Icons.access_time)),
           NavigationDestination(label: "Timer", icon: Icon(Icons.timer)),
         ],
         selectedIndex: _currentPage,
@@ -28,7 +30,8 @@ class _MainScreenState extends State<MainScreen> {
               duration: const Duration(milliseconds: 100), curve: Curves.easeIn);
         },
       ),
-      body: SizedBox(
+      body: Container(
+        color: Colors.blue.shade200,
         height: MediaQuery.of(context).size.height * 0.93,
         child: PageView(
           controller: _pageController,

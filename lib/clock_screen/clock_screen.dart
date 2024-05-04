@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cool_clock/clock_screen/clock_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -34,9 +35,16 @@ class _ClockScreenState extends State<ClockScreen> {
       children: [
         const Text(
           'Clock',
-          style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: 36, fontWeight: FontWeight.bold),
         ),
         Text(formattedTime),
+        const SizedBox(
+          height: 20,
+        ),
+        const ClockWidget(),
+        const SizedBox(
+          height: 20,
+        ),
         Text(formattedDate),
         const SizedBox(
           height: 100,
