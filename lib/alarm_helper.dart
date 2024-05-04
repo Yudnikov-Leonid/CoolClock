@@ -5,6 +5,7 @@ final String tableAlarm = 'alarm';
 final String columnId = 'id';
 final String columnTitle = 'title';
 final String columnDateTime = 'dateTime';
+final String columnDays = 'days';
 final String columnPending = 'isPending';
 
 class AlarmHelper {
@@ -33,7 +34,8 @@ class AlarmHelper {
         $columnId integer primary key autoincrement,
         $columnTitle text not null,
         $columnDateTime text not null,
-        $columnPending integer not null
+        $columnDays text not null,
+        $columnPending integer
         )
 ''');
     });

@@ -30,7 +30,7 @@ class _TimerScreenState extends State<TimerScreen> {
   }
 
   void _loadAlarms() {
-_alarms = _alarmHelper.getAlarms();
+    _alarms = _alarmHelper.getAlarms();
     if (mounted) {
       setState(() {});
     }
@@ -141,6 +141,7 @@ _alarms = _alarmHelper.getAlarms();
                     ),
                     TextField(
                       controller: titleController,
+                      textCapitalization: TextCapitalization.sentences,
                       decoration: const InputDecoration(hintText: 'Title'),
                     ),
                     const SizedBox(
@@ -177,9 +178,16 @@ _alarms = _alarmHelper.getAlarms();
                     ),
                     TextButton(
                         onPressed: () async {
+                          List<int> days = [];
+                          selectedDays.asMap().forEach((index, element) {
+                            if (element) {
+                              days.add(index);
+                            }
+                          });
                           final info = AlarmInfo(
                               title: titleController.text,
                               timeOfDay: selectedTime,
+                              days: days,
                               isPending: true);
                           await _alarmHelper.insertAlarm(info);
                           _loadAlarms();
@@ -229,9 +237,31 @@ _alarms = _alarmHelper.getAlarms();
                     activeColor: Colors.white)
               ],
             ),
-            const Text(
-              'Date',
-              style: TextStyle(color: Colors.white, fontSize: 14),
+            Text(
+              alarm.days
+                  .map((int e) {
+                    String day = '';
+                    switch (e) {
+                      case 0:
+                        day = 'MON';
+                        case 1:
+                        day = 'TUE';
+                        case 2:
+                        day = 'WED';
+                        case 3:
+                        day = 'THU';
+                        case 4:
+                        day = 'FRI';
+                        case 5:
+                        day = 'SAT';
+                        case 6:
+                        day = 'SUN';
+                    }
+                    return day;
+                  })
+                  .toList()
+                  .join(', '),
+              style: const TextStyle(color: Colors.white, fontSize: 14),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -244,7 +274,11 @@ _alarms = _alarmHelper.getAlarms();
                       fontWeight: FontWeight.bold),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.delete, color: Colors.white, size: 30,),
+                  icon: const Icon(
+                    Icons.delete,
+                    color: Colors.white,
+                    size: 30,
+                  ),
                   onPressed: () async {
                     await _alarmHelper.delete(alarm.id!);
                     _loadAlarms();
