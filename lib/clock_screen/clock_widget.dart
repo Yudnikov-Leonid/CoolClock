@@ -14,7 +14,7 @@ class _ClockWidgetState extends State<ClockWidget> {
   @override
   void initState() {
     Timer.periodic(const Duration(seconds: 1), (timer) {
-      setState(() {});
+      if (mounted) setState(() {});
     });
     super.initState();
   }

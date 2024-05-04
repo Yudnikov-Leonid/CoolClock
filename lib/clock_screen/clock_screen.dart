@@ -30,31 +30,39 @@ class _ClockScreenState extends State<ClockScreen> {
     if (!timeZone.startsWith('-')) offsetSign = '+';
 
     return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 32),
         child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        const Text(
-          'Clock',
-          style: TextStyle(fontSize: 36, fontWeight: FontWeight.bold),
-        ),
-        Text(formattedTime),
-        const SizedBox(
-          height: 20,
-        ),
-        const ClockWidget(),
-        const SizedBox(
-          height: 20,
-        ),
-        Text(formattedDate),
-        const SizedBox(
-          height: 100,
-        ),
-        const Text(
-          'Timezone',
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-        ),
-        Text('UTC$offsetSign$timeZone')
-      ],
-    ));
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Clock',
+              style: TextStyle(
+                  fontSize: 36,
+                  color: Colors.grey.shade100,
+                  fontWeight: FontWeight.bold),
+            ),
+            Text(
+              formattedTime,
+              style: TextStyle(color: Colors.grey.shade100, fontSize: 20),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            const Center(child: ClockWidget()),
+            const SizedBox(
+              height: 20,
+            ),
+            Text(formattedDate, style: TextStyle(color: Colors.grey.shade100),),
+            const SizedBox(
+              height: 100,
+            ),
+            Text(
+              'Timezone',
+              style: TextStyle(fontSize: 20,
+                  color: Colors.grey.shade100, fontWeight: FontWeight.bold),
+            ),
+            Text('UTC$offsetSign$timeZone', style: TextStyle(color: Colors.grey.shade100),)
+          ],
+        ));
   }
 }
