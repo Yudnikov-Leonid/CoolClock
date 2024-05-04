@@ -16,12 +16,7 @@ class TimerScreen extends StatefulWidget {
 }
 
 class _TimerScreenState extends State<TimerScreen> {
-  final _list = [
-    AlarmInfo(
-        DateTime.now().add(const Duration(hours: -10)), "Some desc", true),
-    AlarmInfo(
-        DateTime.now().add(const Duration(hours: -20)), "Some desc 2", false)
-  ];
+  final _list = [];
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +53,7 @@ class _TimerScreenState extends State<TimerScreen> {
         animationDuration: const Duration(milliseconds: 100),
         splashColor: Colors.blue.shade900,
         onPressed: () {
-          _makeAlarm('desc');
+          _newAlarmBottomSheet();
         },
         child: const Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -78,6 +73,65 @@ class _TimerScreenState extends State<TimerScreen> {
         ),
       ),
     );
+  }
+
+  void _newAlarmBottomSheet() {
+    TimeOfDay selectedTime = TimeOfDay.now();
+    List<bool> selectedDays = List.generate(7, (_) => true);
+    showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return StatefulBuilder(
+            builder: (context, setState) {
+              return Container(
+                padding: const EdgeInsets.all(20),
+                height: 600,
+                width: double.infinity,
+                child: Column(
+                  children: [
+                    InkWell(
+                      onTap: () async {
+                        final TimeOfDay? timeOfDay = await showTimePicker(
+                            context: context, initialTime: selectedTime);
+                        if (timeOfDay != null) {
+                          setState(() {
+                            selectedTime = timeOfDay;
+                          });
+                        }
+                      },
+                      child: Text(
+                        '${selectedTime.hour}:${selectedTime.minute}',
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 20),
+                      ),
+                    ),
+                    const TextField(
+                      decoration: InputDecoration(hintText: 'Title'),
+                    ),
+                    const SizedBox(
+                      height: 30,
+                    ),
+                    ToggleButtons(
+                      isSelected: selectedDays,
+                      onPressed: (index) {
+                        setState(() {
+                          selectedDays[index] = !selectedDays[index];
+                        });
+                      },
+                      color: Colors.black,
+                      selectedColor: Colors.grey.shade900,
+                      fillColor: Colors.blue.shade100,
+                      splashColor: Colors.transparent,
+                      renderBorder: false,
+                      children: const ['MON', 'TUE', "WED", "THU", 'FRI', 'SAT', 'SUN'].map((text) => Text(text,
+                          style: const TextStyle(fontWeight: FontWeight.bold))).toList(),
+                    )
+                  ],
+                ),
+              );
+            },
+          );
+        });
   }
 
   Widget _alarm(AlarmInfo alarm) {
@@ -103,7 +157,7 @@ class _TimerScreenState extends State<TimerScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  alarm.description,
+                  alarm.title,
                   style: const TextStyle(
                       color: Colors.white,
                       fontSize: 20,
