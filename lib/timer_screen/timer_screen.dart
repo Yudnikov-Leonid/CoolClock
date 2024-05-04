@@ -1,7 +1,9 @@
+import 'package:cool_clock/alarm_helper.dart';
 import 'package:cool_clock/main.dart';
 import 'package:cool_clock/timer_screen/alarm_info.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:intl/intl.dart';
@@ -16,12 +18,28 @@ class TimerScreen extends StatefulWidget {
 }
 
 class _TimerScreenState extends State<TimerScreen> {
-  final _list = [];
+  final _alarmHelper = AlarmHelper();
+  Future<List<AlarmInfo>>? _alarms;
+
+  @override
+  void initState() {
+    _alarmHelper.initializeDatabase().then((value) {
+      _loadAlarms();
+    });
+    super.initState();
+  }
+
+  void _loadAlarms() {
+_alarms = _alarmHelper.getAlarms();
+    if (mounted) {
+      setState(() {});
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 32),
+      padding: const EdgeInsets.only(left: 16, right: 16, top: 32),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -32,10 +50,24 @@ class _TimerScreenState extends State<TimerScreen> {
                 fontSize: 36, color: Colors.white, fontWeight: FontWeight.bold),
           ),
           Expanded(
-            child: ListView(
-              children: _list
-                  .map((alarm) => _alarm(alarm))
-                  .followedBy([_addButton()]).toList(),
+            child: FutureBuilder(
+              future: _alarms,
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return ListView(
+                    children: snapshot.data!
+                        .map((alarm) => _alarm(alarm))
+                        .followedBy([_addButton()]).toList(),
+                  );
+                } else {
+                  return const Center(
+                    child: Text(
+                      'Loading...',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  );
+                }
+              },
             ),
           )
         ],
@@ -45,6 +77,7 @@ class _TimerScreenState extends State<TimerScreen> {
 
   Widget _addButton() {
     return Container(
+      margin: const EdgeInsets.only(bottom: 22),
       height: 100,
       width: double.infinity,
       decoration: BoxDecoration(
@@ -78,6 +111,7 @@ class _TimerScreenState extends State<TimerScreen> {
   void _newAlarmBottomSheet() {
     TimeOfDay selectedTime = TimeOfDay.now();
     List<bool> selectedDays = List.generate(7, (_) => true);
+    TextEditingController titleController = TextEditingController();
     showModalBottomSheet(
         context: context,
         builder: (context) {
@@ -105,8 +139,9 @@ class _TimerScreenState extends State<TimerScreen> {
                             fontWeight: FontWeight.bold, fontSize: 20),
                       ),
                     ),
-                    const TextField(
-                      decoration: InputDecoration(hintText: 'Title'),
+                    TextField(
+                      controller: titleController,
+                      decoration: const InputDecoration(hintText: 'Title'),
                     ),
                     const SizedBox(
                       height: 30,
@@ -123,9 +158,34 @@ class _TimerScreenState extends State<TimerScreen> {
                       fillColor: Colors.blue.shade100,
                       splashColor: Colors.transparent,
                       renderBorder: false,
-                      children: const ['MON', 'TUE', "WED", "THU", 'FRI', 'SAT', 'SUN'].map((text) => Text(text,
-                          style: const TextStyle(fontWeight: FontWeight.bold))).toList(),
-                    )
+                      children: const [
+                        'MON',
+                        'TUE',
+                        "WED",
+                        "THU",
+                        'FRI',
+                        'SAT',
+                        'SUN'
+                      ]
+                          .map((text) => Text(text,
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold)))
+                          .toList(),
+                    ),
+                    const SizedBox(
+                      height: 30,
+                    ),
+                    TextButton(
+                        onPressed: () async {
+                          final info = AlarmInfo(
+                              title: titleController.text,
+                              timeOfDay: selectedTime,
+                              isPending: true);
+                          await _alarmHelper.insertAlarm(info);
+                          _loadAlarms();
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text('Save'))
                   ],
                 ),
               );
@@ -177,7 +237,7 @@ class _TimerScreenState extends State<TimerScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  DateFormat('hh:mm aa').format(alarm.dateTime),
+                  alarm.timeOfDay.format(context),
                   style: const TextStyle(
                       color: Colors.white,
                       fontSize: 22,

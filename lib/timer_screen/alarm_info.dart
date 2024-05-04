@@ -1,19 +1,31 @@
+import 'package:flutter/material.dart';
+
 class AlarmInfo {
-  int id;
+  int? id;
   String title;
-  DateTime dateTime;
+  TimeOfDay timeOfDay;
   bool isPending;
 
-  AlarmInfo(this.id, this.title, this.dateTime, this.isPending);
+  AlarmInfo(
+      {this.id,
+      required this.title,
+      required this.timeOfDay,
+      required this.isPending});
 
   //todo const
-  factory AlarmInfo.fromMap(Map<String, dynamic> json) =>
-      AlarmInfo(json['id'], json['title'], DateTime.parse(json['dateTime']), json['isPending']);
+  factory AlarmInfo.fromMap(Map<String, dynamic> json) {
+    final dateTime = DateTime.parse(json['dateTime']);
+    return AlarmInfo(
+        id: json['id'],
+        title: json['title'],
+        timeOfDay: TimeOfDay(hour: dateTime.hour, minute: dateTime.minute),
+        isPending: json['isPending'] == 1);
+  }
 
   Map<String, dynamic> toJson() => {
-    'id': id,
-    'title': title,
-    'dateTime': dateTime.toIso8601String(),
-    'isPending': isPending
-  };
+        'id': id,
+        'title': title,
+        'dateTime': DateTime(2000, 1, 1, timeOfDay.hour, timeOfDay.minute).toIso8601String(),
+        'isPending': isPending ? 1 : 0
+      };
 }

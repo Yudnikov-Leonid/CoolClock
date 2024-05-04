@@ -18,11 +18,11 @@ class AlarmHelper {
   }
 
   Future<Database> get database async {
-    _database ??= await _initializeDatabase();
+    _database ??= await initializeDatabase();
     return _database!;
   }
 
-  Future<Database> _initializeDatabase() async {
+  Future<Database> initializeDatabase() async {
     final dir = await getDatabasesPath();
     final path = '${dir}alarm.db';
 
@@ -33,14 +33,21 @@ class AlarmHelper {
         $columnId integer primary key autoincrement,
         $columnTitle text not null,
         $columnDateTime text not null,
-        $columnPending integer)
+        $columnPending integer not null
+        )
 ''');
     });
     return database;
   }
 
-  void insertAlarm(AlarmInfo alarm) async {
-    final db = await this.database;
+  Future<void> insertAlarm(AlarmInfo alarm) async {
+    final db = await database;
     db.insert(tableAlarm, alarm.toJson());
+  }
+
+  Future<List<AlarmInfo>> getAlarms() async {
+    final db = await database;
+    final result = await db.query(tableAlarm);
+    return result.map((json) => AlarmInfo.fromMap(json)).toList();
   }
 }
