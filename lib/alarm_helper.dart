@@ -55,6 +55,12 @@ class AlarmHelper {
 
   Future<void> delete(int id) async {
     final db = await database;
-    db.delete(tableAlarm, where: '$columnId = ?', whereArgs: [id]);
+    await db.delete(tableAlarm, where: '$columnId = ?', whereArgs: [id]);
+  }
+
+  Future<void> update(AlarmInfo newInfo) async {
+    final db = await database;
+    await db.update(tableAlarm, newInfo.toJson(),
+        where: '$columnId = ?', whereArgs: [newInfo.id]);
   }
 }

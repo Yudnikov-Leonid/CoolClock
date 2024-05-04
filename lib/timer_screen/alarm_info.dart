@@ -14,6 +14,10 @@ class AlarmInfo {
       required this.days,
       required this.isPending});
 
+  AlarmInfo changePending() {
+    return AlarmInfo(id: id, title: title, timeOfDay: timeOfDay, days: days, isPending: !isPending);
+  }
+
   //todo const
   factory AlarmInfo.fromMap(Map<String, dynamic> json) {
     final dateTime = DateTime.parse(json['dateTime']);

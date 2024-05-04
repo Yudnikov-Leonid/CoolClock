@@ -1,6 +1,7 @@
 import 'package:cool_clock/alarm_helper.dart';
 import 'package:cool_clock/main.dart';
 import 'package:cool_clock/timer_screen/alarm_info.dart';
+import 'package:cool_clock/timer_screen/alarm_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -56,7 +57,7 @@ class _TimerScreenState extends State<TimerScreen> {
                 if (snapshot.hasData) {
                   return ListView(
                     children: snapshot.data!
-                        .map((alarm) => _alarm(alarm))
+                        .map<Widget>((alarm) => AlarmWidget(alarm, _alarmHelper, _loadAlarms))
                         .followedBy([_addButton()]).toList(),
                   );
                 } else {
@@ -200,96 +201,6 @@ class _TimerScreenState extends State<TimerScreen> {
             },
           );
         });
-  }
-
-  Widget _alarm(AlarmInfo alarm) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 32),
-      decoration: BoxDecoration(
-          gradient: LinearGradient(
-              colors: [Colors.blue.shade500, Colors.blue.shade700]),
-          borderRadius: const BorderRadius.all(Radius.circular(20)),
-          boxShadow: [
-            BoxShadow(
-                color: Colors.blue.withOpacity(0.22),
-                blurRadius: 8,
-                spreadRadius: 4,
-                offset: const Offset(4, 4))
-          ]),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  alarm.title,
-                  style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold),
-                ),
-                Switch(
-                    value: alarm.isPending,
-                    onChanged: (value) {},
-                    activeColor: Colors.white)
-              ],
-            ),
-            Text(
-              alarm.days
-                  .map((int e) {
-                    String day = '';
-                    switch (e) {
-                      case 0:
-                        day = 'MON';
-                        case 1:
-                        day = 'TUE';
-                        case 2:
-                        day = 'WED';
-                        case 3:
-                        day = 'THU';
-                        case 4:
-                        day = 'FRI';
-                        case 5:
-                        day = 'SAT';
-                        case 6:
-                        day = 'SUN';
-                    }
-                    return day;
-                  })
-                  .toList()
-                  .join(', '),
-              style: const TextStyle(color: Colors.white, fontSize: 14),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  alarm.timeOfDay.format(context),
-                  style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold),
-                ),
-                IconButton(
-                  icon: const Icon(
-                    Icons.delete,
-                    color: Colors.white,
-                    size: 30,
-                  ),
-                  onPressed: () async {
-                    await _alarmHelper.delete(alarm.id!);
-                    _loadAlarms();
-                  },
-                )
-              ],
-            )
-          ],
-        ),
-      ),
-    );
   }
 
   void _makeAlarm(String desc) async {
