@@ -1,4 +1,4 @@
-import 'package:cool_clock/timer_screen/alarm_info.dart';
+import 'package:cool_clock/alarm_screen/alarm_info.dart';
 import 'package:sqflite/sqflite.dart';
 
 final String tableAlarm = 'alarm';

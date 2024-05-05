@@ -1,25 +1,26 @@
-import 'package:cool_clock/alarm_helper.dart';
+import 'package:cool_clock/alarm_screen/alarm_helper.dart';
 import 'package:cool_clock/main.dart';
-import 'package:cool_clock/timer_screen/alarm_info.dart';
-import 'package:cool_clock/timer_screen/alarm_widget.dart';
-import 'package:cool_clock/timer_screen/edit_bottom_sheet.dart';
+import 'package:cool_clock/alarm_screen/alarm_info.dart';
+import 'package:cool_clock/alarm_screen/alarm_widget.dart';
+import 'package:cool_clock/alarm_screen/edit_bottom_sheet.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_alarm_clock/flutter_alarm_clock.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:intl/intl.dart';
 import 'package:timezone/standalone.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
-class TimerScreen extends StatefulWidget {
-  const TimerScreen({super.key});
+class AlarmScreen extends StatefulWidget {
+  const AlarmScreen({super.key});
 
   @override
-  State<TimerScreen> createState() => _TimerScreenState();
+  State<AlarmScreen> createState() => _AlarmScreenState();
 }
 
-class _TimerScreenState extends State<TimerScreen> {
+class _AlarmScreenState extends State<AlarmScreen> {
   final _alarmHelper = AlarmHelper();
   Future<List<AlarmInfo>>? _alarms;
 

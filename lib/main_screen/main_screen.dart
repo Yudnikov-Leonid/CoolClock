@@ -1,5 +1,5 @@
 import 'package:cool_clock/clock_screen/clock_screen.dart';
-import 'package:cool_clock/timer_screen/timer_screen.dart';
+import 'package:cool_clock/alarm_screen/timer_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
@@ -43,7 +43,7 @@ class _MainScreenState extends State<MainScreen> {
         height: MediaQuery.of(context).size.height * 0.93,
         child: PageView(
           controller: _pageController,
-          children: const [ClockScreen(), TimerScreen()],
+          children: const [ClockScreen(), AlarmScreen()],
           onPageChanged: (value) {
             setState(() {
               _currentPage = value;

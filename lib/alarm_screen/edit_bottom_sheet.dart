@@ -1,5 +1,5 @@
-import 'package:cool_clock/alarm_helper.dart';
-import 'package:cool_clock/timer_screen/alarm_info.dart';
+import 'package:cool_clock/alarm_screen/alarm_helper.dart';
+import 'package:cool_clock/alarm_screen/alarm_info.dart';
 import 'package:flutter/material.dart';
 
 void editAlarmBottomSheet(
