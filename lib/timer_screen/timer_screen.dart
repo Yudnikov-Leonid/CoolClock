@@ -2,6 +2,7 @@ import 'package:cool_clock/alarm_helper.dart';
 import 'package:cool_clock/main.dart';
 import 'package:cool_clock/timer_screen/alarm_info.dart';
 import 'package:cool_clock/timer_screen/alarm_widget.dart';
+import 'package:cool_clock/timer_screen/edit_bottom_sheet.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -87,7 +88,7 @@ class _TimerScreenState extends State<TimerScreen> {
         animationDuration: const Duration(milliseconds: 100),
         splashColor: Colors.blue.shade900,
         onPressed: () {
-          _newAlarmBottomSheet();
+          editAlarmBottomSheet(context, _alarmHelper, _loadAlarms);
         },
         child: const Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -107,100 +108,6 @@ class _TimerScreenState extends State<TimerScreen> {
         ),
       ),
     );
-  }
-
-  void _newAlarmBottomSheet() {
-    TimeOfDay selectedTime = TimeOfDay.now();
-    List<bool> selectedDays = List.generate(7, (_) => true);
-    TextEditingController titleController = TextEditingController();
-    showModalBottomSheet(
-        context: context,
-        builder: (context) {
-          return StatefulBuilder(
-            builder: (context, setState) {
-              return Container(
-                padding: const EdgeInsets.all(20),
-                height: 600,
-                width: double.infinity,
-                child: Column(
-                  children: [
-                    InkWell(
-                      onTap: () async {
-                        final TimeOfDay? timeOfDay = await showTimePicker(
-                            context: context, initialTime: selectedTime);
-                        if (timeOfDay != null) {
-                          setState(() {
-                            selectedTime = timeOfDay;
-                          });
-                        }
-                      },
-                      child: Text(
-                        '${selectedTime.hour}:${selectedTime.minute}',
-                        style: const TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 20),
-                      ),
-                    ),
-                    TextField(
-                      controller: titleController,
-                      textCapitalization: TextCapitalization.sentences,
-                      decoration: const InputDecoration(hintText: 'Title'),
-                    ),
-                    const SizedBox(
-                      height: 30,
-                    ),
-                    ToggleButtons(
-                      isSelected: selectedDays,
-                      onPressed: (index) {
-                        setState(() {
-                          selectedDays[index] = !selectedDays[index];
-                        });
-                      },
-                      color: Colors.black,
-                      selectedColor: Colors.grey.shade900,
-                      fillColor: Colors.blue.shade100,
-                      splashColor: Colors.transparent,
-                      renderBorder: false,
-                      children: const [
-                        'MON',
-                        'TUE',
-                        "WED",
-                        "THU",
-                        'FRI',
-                        'SAT',
-                        'SUN'
-                      ]
-                          .map((text) => Text(text,
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.bold)))
-                          .toList(),
-                    ),
-                    const SizedBox(
-                      height: 30,
-                    ),
-                    TextButton(
-                        onPressed: () async {
-                          List<int> days = [];
-                          selectedDays.asMap().forEach((index, element) {
-                            if (element) {
-                              days.add(index);
-                            }
-                          });
-                          final info = AlarmInfo(
-                              title: titleController.text,
-                              timeOfDay: selectedTime,
-                              days: days,
-                              isPending: true);
-                          await _alarmHelper.insertAlarm(info);
-                          _loadAlarms();
-                          Navigator.of(context).pop();
-                        },
-                        child: const Text('Save'))
-                  ],
-                ),
-              );
-            },
-          );
-        });
   }
 
   void _makeAlarm(String desc) async {
