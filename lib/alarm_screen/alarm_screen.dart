@@ -3,7 +3,6 @@ import 'package:cool_clock/main.dart';
 import 'package:cool_clock/alarm_screen/alarm_info.dart';
 import 'package:cool_clock/alarm_screen/alarm_widget.dart';
 import 'package:cool_clock/alarm_screen/edit_bottom_sheet.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';

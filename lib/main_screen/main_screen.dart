@@ -1,5 +1,6 @@
 import 'package:cool_clock/clock_screen/clock_screen.dart';
-import 'package:cool_clock/alarm_screen/timer_screen.dart';
+import 'package:cool_clock/alarm_screen/alarm_screen.dart';
+import 'package:cool_clock/stopwatch_screen/stopwatch_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
@@ -23,13 +24,15 @@ class _MainScreenState extends State<MainScreen> {
         height: 60,
         destinations: const [
           NavigationDestination(
-            label: '',
+              label: '',
               icon: Icon(
-            Icons.access_time,
-            color: Colors.white,
-          )),
+                Icons.access_time,
+                color: Colors.white,
+              )),
           NavigationDestination(
-              label: "", icon: Icon(Icons.timer, color: Colors.white)),
+              label: "", icon: Icon(Icons.alarm, color: Colors.white)),
+          NavigationDestination(
+              label: "", icon: Icon(Icons.timer_sharp, color: Colors.white)),
         ],
         selectedIndex: _currentPage,
         onDestinationSelected: (value) {
@@ -43,7 +46,7 @@ class _MainScreenState extends State<MainScreen> {
         height: MediaQuery.of(context).size.height * 0.93,
         child: PageView(
           controller: _pageController,
-          children: const [ClockScreen(), AlarmScreen()],
+          children: const [ClockScreen(), AlarmScreen(), StopwatchScreen()],
           onPageChanged: (value) {
             setState(() {
               _currentPage = value;
