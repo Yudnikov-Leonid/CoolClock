@@ -33,7 +33,6 @@ class _StopwatchScreenState extends State<StopwatchScreen> {
         setState(() {
           final seconds = pref.getInt(secondsKey) ?? 0;
           pref.setInt(secondsKey, seconds + 1);
-          _timeString = _format(seconds);
           pref.setInt(lastUpdateKey, DateTime.now().millisecondsSinceEpoch);
         });
       }
@@ -45,7 +44,14 @@ class _StopwatchScreenState extends State<StopwatchScreen> {
     final pref = await SharedPreferences.getInstance();
     _onPause = pref.getBool(onPauseKey) ?? false;
     _isRunning = pref.getBool(isRunningKey) ?? false;
-    _timeString = _format(pref.getInt(secondsKey) ?? 0);
+    int seconds = pref.getInt(secondsKey) ?? 0;
+    if (_isRunning && !_onPause) {
+      final lastUpdate = pref.getInt(lastUpdateKey) ?? 0;
+      print(lastUpdate);
+      seconds += (DateTime.now().millisecondsSinceEpoch - lastUpdate) ~/ 1000;
+      await pref.setInt(secondsKey, seconds);
+    }
+    _timeString = _format(seconds);
     setState(() {});
   }
 
