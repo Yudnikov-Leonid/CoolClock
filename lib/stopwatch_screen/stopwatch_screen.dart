@@ -11,7 +11,7 @@ class StopwatchScreen extends StatefulWidget {
 }
 
 class _StopwatchScreenState extends State<StopwatchScreen> {
-  static const secondsKey = 'SECONDS_KEY';
+  static const millisecondsKey = 'MILLISECONDS_KEY';
   static const lastUpdateKey = 'LAST_UPDATE_KEY';
   static const isRunningKey = 'IS_RUNNING_KEY';
   static const onPauseKey = 'ON_PAUSE_KEY';
@@ -26,13 +26,13 @@ class _StopwatchScreenState extends State<StopwatchScreen> {
   @override
   void initState() {
     _handleTimer();
-    _timer = Timer.periodic(const Duration(seconds: 1), (value) async {
+    _timer = Timer.periodic(const Duration(milliseconds: 100), (value) async {
       if (mounted && _isRunning && !_onPause) {
         final pref = await SharedPreferences.getInstance();
-        _timeString = _format(pref.getInt(secondsKey) ?? 0);
+        _timeString = _format(pref.getDouble(millisecondsKey) ?? 0);
         setState(() {
-          final seconds = pref.getInt(secondsKey) ?? 0;
-          pref.setInt(secondsKey, seconds + 1);
+          final milliseconds = pref.getDouble(millisecondsKey) ?? 0;
+          pref.setDouble(millisecondsKey, milliseconds + 100);
           pref.setInt(lastUpdateKey, DateTime.now().millisecondsSinceEpoch);
         });
       }
@@ -44,14 +44,13 @@ class _StopwatchScreenState extends State<StopwatchScreen> {
     final pref = await SharedPreferences.getInstance();
     _onPause = pref.getBool(onPauseKey) ?? false;
     _isRunning = pref.getBool(isRunningKey) ?? false;
-    int seconds = pref.getInt(secondsKey) ?? 0;
+    double milliseconds = pref.getDouble(millisecondsKey) ?? 0;
     if (_isRunning && !_onPause) {
       final lastUpdate = pref.getInt(lastUpdateKey) ?? 0;
-      print(lastUpdate);
-      seconds += (DateTime.now().millisecondsSinceEpoch - lastUpdate) ~/ 1000;
-      await pref.setInt(secondsKey, seconds);
+      milliseconds += DateTime.now().millisecondsSinceEpoch - lastUpdate;
+      await pref.setDouble(millisecondsKey, milliseconds);
     }
-    _timeString = _format(seconds);
+    _timeString = _format(milliseconds);
     setState(() {});
   }
 
@@ -87,7 +86,7 @@ class _StopwatchScreenState extends State<StopwatchScreen> {
                     _onPause = pref.getBool(onPauseKey) ?? false;
                     _isRunning = pref.getBool(isRunningKey) ?? false;
                     if (_isRunning || _onPause) {
-                      await pref.setInt(secondsKey, 0);
+                      await pref.setDouble(millisecondsKey, 0);
                       _onPause = false;
                       await pref.setBool(onPauseKey, false);
                       _timeString = _format(0);
@@ -120,7 +119,8 @@ class _StopwatchScreenState extends State<StopwatchScreen> {
     );
   }
 
-  String _format(int sec) {
+  String _format(double milliseconds) {
+    final sec = milliseconds ~/ 1000;
     final seconds = sec % 60;
     final minutes = sec % 3600 ~/ 60;
     final hours = sec ~/ 3600;
