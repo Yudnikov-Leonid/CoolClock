@@ -5,7 +5,7 @@
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
 
     <application
-        android:label="cool_clock"
+        android:label="Cool Clock"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

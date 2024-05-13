@@ -1,5 +1,6 @@
 import 'package:cool_clock/main_screen/main_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest.dart' as tz;
 
@@ -33,9 +34,10 @@ void main() async {
       .resolvePlatformSpecificImplementation<
           AndroidFlutterLocalNotificationsPlugin>()
       ?.requestNotificationsPermission();
-  runApp(const MaterialApp(
+
+  runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
     title: "Cool clock",
-    home: MainScreen(),
+    home: Container(color: Colors.blue.shade900, child: const SafeArea( top: true, child: MainScreen())),
   ));
 }
