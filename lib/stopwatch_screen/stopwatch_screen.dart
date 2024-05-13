@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class StopwatchScreen extends StatefulWidget {
   const StopwatchScreen({super.key});
@@ -10,21 +11,42 @@ class StopwatchScreen extends StatefulWidget {
 }
 
 class _StopwatchScreenState extends State<StopwatchScreen> {
-  Timer? timer;
-  int seconds = 0;
-  bool isRunning = false;
-  bool onPause = false;
+  static const secondsKey = 'SECONDS_KEY';
+  static const lastUpdateKey = 'LAST_UPDATE_KEY';
+  static const isRunningKey = 'IS_RUNNING_KEY';
+  static const onPauseKey = 'ON_PAUSE_KEY';
+
+  bool _onPause = false;
+  bool _isRunning = false;
+
+  Timer? _timer;
+
+  String _timeString = '';
 
   @override
   void initState() {
-    timer = Timer.periodic(const Duration(seconds: 1), (value) {
-      if (mounted && isRunning && !onPause) {
+    _handleTimer();
+    _timer = Timer.periodic(const Duration(seconds: 1), (value) async {
+      if (mounted && _isRunning && !_onPause) {
+        final pref = await SharedPreferences.getInstance();
+        _timeString = _format(pref.getInt(secondsKey) ?? 0);
         setState(() {
-          seconds++;
+          final seconds = pref.getInt(secondsKey) ?? 0;
+          pref.setInt(secondsKey, seconds + 1);
+          _timeString = _format(seconds);
+          pref.setInt(lastUpdateKey, DateTime.now().millisecondsSinceEpoch);
         });
       }
     });
     super.initState();
+  }
+
+  void _handleTimer() async {
+    final pref = await SharedPreferences.getInstance();
+    _onPause = pref.getBool(onPauseKey) ?? false;
+    _isRunning = pref.getBool(isRunningKey) ?? false;
+    _timeString = _format(pref.getInt(secondsKey) ?? 0);
+    setState(() {});
   }
 
   @override
@@ -44,7 +66,7 @@ class _StopwatchScreenState extends State<StopwatchScreen> {
           ),
           Center(
               child: Text(
-            _format(seconds),
+            _timeString,
             style: const TextStyle(color: Colors.white, fontSize: 40),
           )),
           const SizedBox(
@@ -54,29 +76,35 @@ class _StopwatchScreenState extends State<StopwatchScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               TextButton(
-                  onPressed: () {
-                    setState(() {
-                      isRunning = !isRunning;
-                      if (isRunning || onPause) {
-                        seconds = 0;
-                      }
-                      onPause = false;
-                    });
+                  onPressed: () async {
+                    final pref = await SharedPreferences.getInstance();
+                    _onPause = pref.getBool(onPauseKey) ?? false;
+                    _isRunning = pref.getBool(isRunningKey) ?? false;
+                    if (_isRunning || _onPause) {
+                      await pref.setInt(secondsKey, 0);
+                      _onPause = false;
+                      await pref.setBool(onPauseKey, false);
+                      _timeString = _format(0);
+                    }
+                    _isRunning = !_isRunning;
+                    await pref.setBool(isRunningKey, _isRunning);
+                    setState(() {});
                   },
                   child: Text(
-                    isRunning || onPause ? 'Stop' : 'Start',
+                    _isRunning || _onPause ? 'Stop' : 'Start',
                     style: const TextStyle(color: Colors.white, fontSize: 20),
                   )),
               TextButton(
-                  onPressed: () {
-                    if (isRunning) {
-                      setState(() {
-                        onPause = !onPause;
-                      });
+                  onPressed: () async {
+                    final pref = await SharedPreferences.getInstance();
+                    if (_isRunning) {
+                      _onPause = !_onPause;
+                      pref.setBool(onPauseKey, _onPause);
+                      setState(() {});
                     }
                   },
                   child: Text(
-                    onPause ? 'Resume' : 'Pause',
+                    _onPause ? 'Resume' : 'Pause',
                     style: const TextStyle(color: Colors.white, fontSize: 20),
                   ))
             ],
